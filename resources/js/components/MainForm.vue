@@ -80,7 +80,8 @@ facility are in the developmental network.">
 select an existing group name from the drop down list, or choose to suggest a new group name
 when proposing the creation of a new archive group.">
 
-                <v-select v-model="form.group" v-if="! wantsNewGroup" :options="archiverGroups"></v-select>
+                <v-select class="text-muted" v-model="form.group" v-if="! wantsNewGroup"
+                          placeholder="start typing or scroll to search.." :options="archiverGroups"></v-select>
                 <b-form-input  v-model="form.group" v-if="wantsNewGroup" placeholder="Group Name"></b-form-input>
                 <b-form-checkbox class="new-group-toggle text-muted" v-model="form.newGroup" value="1" >
                    Request a New Group</b-form-checkbox>
@@ -200,6 +201,10 @@ history older than this span will continually be purged to free up disk space."
     .v-select {
         max-width: 55%;
         background-color: white;
+    }
+
+    .vs__search{
+        color: darkgray;
     }
     .new-group-toggle {
         max-width: 30%;
