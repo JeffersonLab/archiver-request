@@ -17,7 +17,7 @@ facility are in the developmental network.">
             </b-form-group>
 
             <b-form-group label-cols-md="3" label="Requester:" label-size="lg">
-                <b-form-input placeholder="JLab username" v-model="form.username"> </b-form-input>
+                <b-form-input class="username" placeholder="JLab username" v-model="form.username"> </b-form-input>
             </b-form-group>
 
             <b-form-group label-cols-md="3" label="Request Type:" label-size="lg">
@@ -205,6 +205,9 @@ history older than this span will continually be purged to free up disk space."
 
     .vs__search{
         color: darkgray;
+    }
+    .username {
+        width: 12em;
     }
     .new-group-toggle {
         max-width: 30%;
