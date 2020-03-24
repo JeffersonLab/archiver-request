@@ -1,8 +1,8 @@
 <template>
-<b-form-group>
+<div>
     <b-form-input class="channel" placeholder="channel" v-model="value.channel"></b-form-input>
     <b-form-input class="deadband" placeholder="deadband" v-model="value.deadband"></b-form-input>
-</b-form-group>
+</div>
 </template>
 
 <script>
@@ -17,6 +17,7 @@
 
 input {
     margin-right: 1em;
+    display: inline-block;
 }
 .channel {
     width: 20em;

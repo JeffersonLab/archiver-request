@@ -1,5 +1,5 @@
 <template>
-    <b-form class="mya-request" inline @submit="onSubmit">
+    <b-form class="mya-request" @submit="onSubmit">
         <fieldset class="common-fields rounded">
             <h3 class="d-block text-center">Basic Info</h3>
             <b-form-group label-cols-md="3" label="Deployment:" label-size="lg"
@@ -47,7 +47,7 @@ facility are in the developmental network.">
                 :description="selectMethodDescription">
 
 
-                <b-form-group inline class="channels" v-if="form.selectMethod =='form'">
+                <b-form-group class="channels" v-if="form.selectMethod =='form'">
                         <channel-widget   v-for="(item, index) in form.channels" v-model="form.channels[index]" key="index">
                         </channel-widget>
                     <b-button @click="addChannel" variant="outline-info" class=mb-2 title="add another channel">
