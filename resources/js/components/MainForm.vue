@@ -71,6 +71,14 @@ facility are in the developmental network.">
 
             </b-form-group>
 
+            <b-form-group label-cols-md="3" label="Comments" label-size="lg"
+                          description="Any comments you care to make about the request">
+                <b-textarea v-model="form.comments"
+                            :trim="true"
+                            max-rows="8"
+                ></b-textarea>
+            </b-form-group>
+            
         </fieldset>
 
         <fieldset class="channel-metadata rounded" v-if="form.requestType != 'change-deadbands'">
@@ -86,6 +94,7 @@ when proposing the creation of a new archive group.">
                 <b-form-checkbox class="new-group-toggle text-muted" v-model="form.newGroup" value="1" >
                    Request a New Group</b-form-checkbox>
             </b-form-group>
+
 
 
             <b-form-group  label-cols-md="3" label="Duration (weeks):" label-size="lg"
