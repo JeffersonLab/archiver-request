@@ -58,6 +58,7 @@
 
 <script>
 var archiverGroups = @json($groups, JSON_PRETTY_PRINT);
+var groupTrees = @json($groupTrees, JSON_PRETTY_PRINT);
 </script>
 
 <script src="{{asset('js/app.js')}}"></script>

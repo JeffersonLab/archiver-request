@@ -78,7 +78,7 @@ facility are in the developmental network.">
                             max-rows="8"
                 ></b-textarea>
             </b-form-group>
-            
+
         </fieldset>
 
         <fieldset class="channel-metadata rounded" v-if="form.requestType != 'change-deadbands'">
@@ -88,8 +88,15 @@ facility are in the developmental network.">
 select an existing group name from the drop down list, or choose to suggest a new group name
 when proposing the creation of a new archive group.">
 
+                <div>
+                    <b-button @click="showModal">TreeView</b-button><br />
+                    <v-treeselect class="v-select" :data="archiverGroupTrees" placeholder="browse" value-field-name="path" v-model="form.group"></v-treeselect><span v-if="form.group">Path: {{form.group}}</span>
+                </div>
+
+
                 <v-select class="text-muted" v-model="form.group" v-if="! wantsNewGroup"
                           placeholder="start typing or scroll to search.." :options="archiverGroups"></v-select>
+
                 <b-form-input  v-model="form.group" v-if="wantsNewGroup" placeholder="Group Name"></b-form-input>
                 <b-form-checkbox class="new-group-toggle text-muted" v-model="form.newGroup" value="1" >
                    Request a New Group</b-form-checkbox>
@@ -128,18 +135,28 @@ history older than this span will continually be purged to free up disk space."
             </b-button>
         </div>
 
+
+        <b-modal ref="groups-modal">
+            <v-jstree :data="archiverGroupTrees" show-checkbox @item-click="groupClicked"></v-jstree>
+        </b-modal>
     </b-form>
 </template>
 
 <script>
     import vSelect from 'vue-select'
+    import VTreeselect from 'vue-treeselect';
     import ChannelWidget from "./ChannelWidget";
+    import GroupsTree from "./GroupsTree";
+    import VJstree from 'vue-jstree'
 
     export default {
         name: "MainForm",
         components: {
             vSelect,
-            ChannelWidget
+            ChannelWidget,
+            GroupsTree,
+            VTreeselect,
+            VJstree
         },
         data() {
             return {
@@ -190,14 +207,24 @@ history older than this span will continually be purged to free up disk space."
               return this.form.newGroup;
             },
             archiverGroups(){
-                console.log(window.archiverGroups);
                 return window.archiverGroups;
-            }
+            },
+            archiverGroupTrees(){
+                return window.groupTrees;
+            },
+
         },
         methods: {
             onSubmit(evt) {
                 evt.preventDefault()
                 alert(JSON.stringify(this.form))
+            },
+            showModal(){
+                this.$refs['groups-modal'].show();
+            },
+            groupClicked(node, item, e){
+                this.form.group = item.path;
+                this.$refs['groups-modal'].hide();
             },
             addChannel(){
                 this.form.channels.push({channel:'', deadband:''});
@@ -210,6 +237,7 @@ history older than this span will continually be purged to free up disk space."
     .v-select {
         max-width: 55%;
         background-color: white;
+        margin-right: 1em;
     }
 
     .vs__search{
