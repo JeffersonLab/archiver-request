@@ -16,7 +16,8 @@ facility are in the developmental network.">
                 ></b-form-radio-group>
             </b-form-group>
 
-            <b-form-group label-cols-md="3" label="Requester:" label-size="lg">
+            <b-form-group label-cols-md="3" label="Requester:" label-size="lg"
+                description="Person to contact with questions about the request">
                 <b-form-input class="username" placeholder="JLab username" v-model="form.username"></b-form-input>
             </b-form-group>
 
