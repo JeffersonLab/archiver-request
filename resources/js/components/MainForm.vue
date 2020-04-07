@@ -88,14 +88,12 @@ facility are in the developmental network.">
 select an existing group name from the drop down list, or choose to suggest a new group name
 when proposing the creation of a new archive group.">
 
-                <div>
-                    <b-button @click="showModal">TreeView</b-button><br />
-                    <v-treeselect class="v-select" :data="archiverGroupTrees" placeholder="browse" value-field-name="path" v-model="form.group"></v-treeselect><span v-if="form.group">Path: {{form.group}}</span>
-                </div>
+<!--                    <b-button @click="showModal">TreeView</b-button><br />-->
+                    <treeselect v-show="! wantsNewGroup" class="v-select" :options="archiverGroupTrees" placeholder="browse or search" value-field-name="path" v-model="form.group" :normalizer="normalizeData"></treeselect><div class="align-top" style="display: inline-block" v-show="true">Path: {{form.group}}</div>
 
 
-                <v-select class="text-muted" v-model="form.group" v-if="! wantsNewGroup"
-                          placeholder="start typing or scroll to search.." :options="archiverGroups"></v-select>
+<!--                <v-select class="text-muted" v-model="form.group" v-if="! wantsNewGroup"-->
+<!--                          placeholder="start typing or scroll to search.." :options="archiverGroups"></v-select>-->
 
                 <b-form-input  v-model="form.group" v-if="wantsNewGroup" placeholder="Group Name"></b-form-input>
                 <b-form-checkbox class="new-group-toggle text-muted" v-model="form.newGroup" value="1" >
@@ -144,7 +142,9 @@ history older than this span will continually be purged to free up disk space."
 
 <script>
     import vSelect from 'vue-select'
-    import VTreeselect from 'vue-treeselect';
+    import Treeselect from '@riophae/vue-treeselect';
+    import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+
     import ChannelWidget from "./ChannelWidget";
     import GroupsTree from "./GroupsTree";
     import VJstree from 'vue-jstree'
@@ -155,7 +155,7 @@ history older than this span will continually be purged to free up disk space."
             vSelect,
             ChannelWidget,
             GroupsTree,
-            VTreeselect,
+            Treeselect,
             VJstree
         },
         data() {
@@ -228,6 +228,15 @@ history older than this span will continually be purged to free up disk space."
             },
             addChannel(){
                 this.form.channels.push({channel:'', deadband:''});
+            },
+            normalizeData(item){
+                // Normalize the tree items for the format expected by vue-treeselect
+                // @see https://vue-treeselect.js.org/
+                return {
+                    label: item.text,
+                    id : item.path,
+                    children: item.children.length === 0 ? undefined : item.children,
+                }
             }
         }
     }
@@ -235,9 +244,10 @@ history older than this span will continually be purged to free up disk space."
 
 <style>
     .v-select {
-        max-width: 55%;
+        max-width: 50%;
         background-color: white;
         margin-right: 1em;
+        display: inline-block;
     }
 
     .vs__search{
