@@ -89,7 +89,7 @@ select an existing group name from the drop down list, or choose to suggest a ne
 when proposing the creation of a new archive group.">
 
 <!--                    <b-button @click="showModal">TreeView</b-button><br />-->
-                    <treeselect v-show="! wantsNewGroup" class="v-select" :options="archiverGroupTrees" placeholder="browse or search" value-field-name="path" v-model="form.group" :normalizer="normalizeData"></treeselect><div class="align-top" style="display: inline-block" v-show="true">Path: {{form.group}}</div>
+                    <treeselect v-show="! wantsNewGroup" class="v-select" :options="archiverGroupTrees" placeholder="browse or search" value-field-name="path" v-model="form.group" :normalizer="normalizeData"></treeselect><div class="align-top" style="display: inline-block" v-show="form.group">Path: {{form.group}}</div>
 
 
 <!--                <v-select class="text-muted" v-model="form.group" v-if="! wantsNewGroup"-->
