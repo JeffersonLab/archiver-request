@@ -17,22 +17,20 @@
     }
 </script>
 
-<style scoped>
-    div.input-group{
-        max-width: 45%;
-    }
+<style>
     .channel-definition{
         width: 100%;
     }
-    input {
-        display: inline-flex;
+    .channel-definition .input-group{
+        max-width: 45%;
     }
 
-    .channel {
-        width: 20em;
+
+    .channel-definition .form-control.channel {
+        flex-basis: 60%;
     }
 
-    .deadband {
-        width: 8em;
+    .channel-definition .form-control.deadband {
+        flex-basis: 30%;
     }
 </style>
