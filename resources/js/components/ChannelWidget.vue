@@ -1,8 +1,12 @@
 <template>
-<div>
-    <b-form-input class="channel" placeholder="channel" v-model="value.channel"></b-form-input>
-    <b-form-input class="deadband" placeholder="deadband" v-model="value.deadband"></b-form-input>
-</div>
+    <div class="channel-definition">
+        <b-input-group prepend="channel:" class="d-inline-flex">
+            <b-form-input  class="channel" v-model="value.channel"></b-form-input>
+        </b-input-group>
+        <b-input-group prepend="deadband:" class="d-inline-flex">
+            <b-form-input class="deadband" v-model="value.deadband"></b-form-input>
+        </b-input-group>
+    </div>
 </template>
 
 <script>
@@ -14,16 +18,21 @@
 </script>
 
 <style scoped>
+    div.input-group{
+        max-width: 45%;
+    }
+    .channel-definition{
+        width: 100%;
+    }
+    input {
+        display: inline-flex;
+    }
 
-input {
-    margin-right: 1em;
-    display: inline-block;
-}
-.channel {
-    width: 20em;
-}
+    .channel {
+        width: 20em;
+    }
 
-.deadband {
-    width: 8em;
-}
+    .deadband {
+        width: 8em;
+    }
 </style>

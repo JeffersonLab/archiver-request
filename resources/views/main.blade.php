@@ -35,7 +35,7 @@
                                     currently archived channels.  For other types of requests, please <a href="#">contact the Mya Administrator</a>.
                                 </p>
                                 <p>
-                                    <a class="btn btn-primary btn-large" href="#">Learn more</a>
+                                    <learn-more></learn-more>
                                 </p>
                                 </div>
                             </b-col>
@@ -65,3 +65,9 @@ var groupTrees = @json($groupTrees, JSON_PRETTY_PRINT);
 
 </html>
 
+<script>
+    import LearnMore from "../js/components/LearnMore";
+    export default {
+        components: {LearnMore}
+    }
+</script>

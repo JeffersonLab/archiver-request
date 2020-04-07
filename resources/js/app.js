@@ -25,6 +25,7 @@ Vue.use(BootstrapVueIcons);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 import MainForm from "./components/MainForm";
+import LearnMore from "./components/LearnMore";
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -34,6 +35,6 @@ import MainForm from "./components/MainForm";
 
 const app = new Vue({
     el: '#app',
-    components: { MainForm },
+    components: { MainForm, LearnMore },
 
 });
