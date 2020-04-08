@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ChannelRequest;
 use App\Model\ArchiveRequest;
 use App\Model\ArchiverGroup;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -9,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\MessageBag;
 
 class Controller extends BaseController
@@ -79,10 +81,12 @@ class Controller extends BaseController
         try {
             $archiveRequest = ArchiveRequest::make($request->all());
             if ($archiveRequest->validate()) {
+                Mail::send(new ChannelRequest($archiveRequest));
                 return response()->json('success');
             }
             return response()->json($archiveRequest->errors, 400);
         } catch (\Exception $e) {
+            dd($e);
             return response()->json($e->getMessage(), 500);
         }
 

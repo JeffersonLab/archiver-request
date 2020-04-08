@@ -50,6 +50,15 @@ class ArchiveRequest extends Model
         return $groups;
     }
 
+    // TODO use database lookup.
+    public function email(){
+        return $this->username .'@jlab.org';
+    }
+
+    public function channels(){
+        return $this->channels;
+    }
+
     public function validate()
     {
         $this->errors = new MessageBag();
