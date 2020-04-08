@@ -57,7 +57,7 @@
 </div>
 
 <script>
-var baseUrl = @json(url()->current());
+var baseUrl = @json(url()->current().'/');  //trailing slash to prevent 301 redirects on postings
 var groupTrees = @json($groupTrees, JSON_PRETTY_PRINT);
 </script>
 
