@@ -253,7 +253,7 @@ history older than this span will continually be purged to free up disk space."
         methods: {
             onSubmit(evt) {
                 evt.preventDefault()
-                axios.post('/', this.form)
+                axios.post(window.baseUrl, this.form)  //expect server to have set baseUrl in main.blade.php
                 .then(
                     response => {
                         this.$bvModal.show('success-dialog');

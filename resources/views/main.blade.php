@@ -57,6 +57,7 @@
 </div>
 
 <script>
+var baseUrl = @json(url()->current());
 var groupTrees = @json($groupTrees, JSON_PRETTY_PRINT);
 </script>
 
