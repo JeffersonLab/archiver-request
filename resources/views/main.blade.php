@@ -57,7 +57,6 @@
 </div>
 
 <script>
-var archiverGroups = @json($groups, JSON_PRETTY_PRINT);
 var groupTrees = @json($groupTrees, JSON_PRETTY_PRINT);
 </script>
 
@@ -65,9 +64,4 @@ var groupTrees = @json($groupTrees, JSON_PRETTY_PRINT);
 
 </html>
 
-<script>
-    import LearnMore from "../js/components/LearnMore";
-    export default {
-        components: {LearnMore}
-    }
-</script>
+

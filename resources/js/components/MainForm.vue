@@ -17,8 +17,12 @@ facility are in the developmental network.">
             </b-form-group>
 
             <b-form-group label-cols-md="3" label="Requester:" label-size="lg"
-                description="Person to contact with questions about the request">
-                <b-form-input class="username" placeholder="JLab username" v-model="form.username"></b-form-input>
+                          :invalid-feedback="errorFeedback('username')"
+                          :state="isValid('username')"
+                description="(required) Person to contact with questions about the request">
+                <b-input-group append="@jlab.org" class="username">
+                    <b-form-input class="username" placeholder="JLab username" v-model="form.username"></b-form-input>
+                </b-input-group>
             </b-form-group>
 
             <b-form-group label-cols-md="3" label="Request Type:" label-size="lg">
@@ -50,7 +54,7 @@ facility are in the developmental network.">
 
 
                 <b-form-group class="channels" v-if="form.selectMethod =='form'">
-                    <channel-widget v-for="(item, index) in form.channels" v-model="form.channels[index]" key="index">
+                    <channel-widget v-for="(item, index) in form.channels" v-model="form.channels[index]" :key="index">
                     </channel-widget>
                     <b-button @click="addChannel" variant="outline-info" class=mb-2 title="add another channel">
                         <b-icon-plus></b-icon-plus>
@@ -89,7 +93,9 @@ facility are in the developmental network.">
             <h3 class="d-block text-center">Channel Metadata</h3>
             <!-- Group Selection -->
             <b-form-group label-cols-md="3" label="Group Selection" label-size="lg"
-                          description="All Core Set channels must belong to an organizational archive group. You may
+                          :invalid-feedback="errorFeedback('group')"
+                          :state="isValid('group')"
+                          description="(required) All Core Set channels must belong to an organizational archive group. You may
 select an existing group name from the drop down list, or choose to suggest a new group name
 when proposing the creation of a new archive group.">
 
@@ -139,6 +145,31 @@ history older than this span will continually be purged to free up disk space."
             </b-button>
         </div>
 
+        <div>{{info}}</div>
+
+        <b-modal id="form-errors-dialog"
+                 title="Form Contains Errors"
+                 :ok-only="true"
+                 header-text-variant="danger">
+            <p>Please correct the items below:</p>
+            <ul>
+            <template v-for="(v, k) in errors">
+                <li v-for="error in v" :key="error" >
+                    {{ error }}
+                </li>
+            </template>
+            </ul>
+        </b-modal>
+
+        <b-modal id="success-dialog"
+                 title="Request Submitted"
+                 :ok-only="true"
+                 header-text-variant="success">
+            <p>The mya administrator will receive email notification of your request.
+            You should expect a response to your request within a day or so.</p>
+        </b-modal>
+
+
     </b-form>
 </template>
 
@@ -158,6 +189,7 @@ history older than this span will continually be purged to free up disk space."
         },
         data() {
             return {
+                info: '',
                 form: {
                     deployment: 'OPS',
                     username: '',
@@ -190,6 +222,8 @@ history older than this span will continually be purged to free up disk space."
                         {text: 'File Upload', value: 'file'},
                     ]
                 },
+                errors:{},
+
             }
         },
         computed: {
@@ -208,25 +242,33 @@ history older than this span will continually be purged to free up disk space."
             wantsNewGroup() {
                 return this.form.newGroup;
             },
-            archiverGroups() {
-                return window.archiverGroups;
-            },
             archiverGroupTrees() {
                 return window.groupTrees;
             },
+            emailAddress(){
+                return this.form.username ? this.form.username+'@jlab.org' : '';
+            }
 
         },
         methods: {
             onSubmit(evt) {
                 evt.preventDefault()
-                alert(JSON.stringify(this.form))
-            },
-            showModal() {
-                this.$refs['groups-modal'].show();
-            },
-            groupClicked(node, item, e) {
-                this.form.group = item.path;
-                this.$refs['groups-modal'].hide();
+                axios.post('/', this.form)
+                .then(
+                    response => {
+                        this.$bvModal.show('success-dialog');
+                    }
+                )
+                .catch(error => {
+                    if (error.response && error.response.status == 400){
+                        this.errors = error.response.data;
+                        this.$bvModal.show('form-errors-dialog');
+                    }else{
+                        console.log(error);
+                        alert('An error occurred when trying to submit the form.')
+                    }
+                })
+                //alert(JSON.stringify(this.form))
             },
             addChannel() {
                 this.form.channels.push({channel: '', deadband: ''});
@@ -239,6 +281,15 @@ history older than this span will continually be purged to free up disk space."
                     id: item.path,
                     children: item.children.length === 0 ? undefined : item.children,
                 }
+            },
+            isValid(field){
+              return ! this.hasErrors(field);
+            },
+            hasErrors(field){
+                return this.errors.hasOwnProperty(field);
+            },
+            errorFeedback(field){
+                return this.hasErrors(field) ? this.errors[field][0] : '';
             }
         }
     }
@@ -257,7 +308,7 @@ history older than this span will continually be purged to free up disk space."
     }
 
     .username {
-        width: 12em;
+        max-width: 20em;
     }
 
     .new-group-toggle {
