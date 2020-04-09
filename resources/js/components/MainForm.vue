@@ -54,7 +54,10 @@ facility are in the developmental network.">
 
 
                 <b-form-group class="channels" v-if="form.selectMethod =='form'">
-                    <channel-widget v-for="(item, index) in form.channels" v-model="form.channels[index]" :key="index">
+                    <channel-widget v-for="(item, index) in form.channels"
+                                    :with-deadbands="form.requestType != 'change-metadata'"
+                                    v-model="form.channels[index]"
+                                    :key="index">
                     </channel-widget>
                     <b-button @click="addChannel" variant="outline-info" class=mb-2 title="add another channel">
                         <b-icon-plus></b-icon-plus>
@@ -227,14 +230,39 @@ history older than this span will continually be purged to free up disk space."
             }
         },
         computed: {
+            // help text for channels widget that depends on requestType
+            formDescription(){
+                if (this.form.requestType === 'change-metadata'){
+                    return "Enter channels";
+                }else{
+                    return "Enter channels (with optional deadbands)";
+                }
+            },
+            // help text for bulk channels that depends on requestType
+            bulkDescription(){
+                if (this.form.requestType === 'change-metadata'){
+                    return "Enter channels one per line";
+                }else{
+                    return "Enter channels (followed by whitespace and optional deadband) one per line";
+                }
+            },
+            // help text for file channels that depends on requestType
+            fileDescription(){
+                if (this.form.requestType === 'change-metadata'){
+                    return "Choose a plain text file containing channel names";
+                }else{
+                    return "Choose a plain text file containing channel names " +
+                        "(followed by whitespace and optional deadband) one per line";
+                }
+            },
             selectMethodDescription() {
                 switch (this.form.selectMethod) {
                     case "form" :
-                        return "Enter channels (with optional deadbands)";
+                        return this.formDescription;
                     case "bulk" :
-                        return "Enter channels (followed by whitespace and optional deadband) one per line";
+                        return this.bulkDescription;
                     case "file" :
-                        return "Choose a plain text file containing channel names (followed by whitespace and optional deadband) one per line";
+                        return this.fileDescription;
                     default :
                         return ""
                 }
