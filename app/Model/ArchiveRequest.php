@@ -6,6 +6,7 @@ namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\MessageBag;
 
 class ArchiveRequest extends Model
@@ -15,10 +16,16 @@ class ArchiveRequest extends Model
 
     public $guarded = [];
 
+    /**
+     * @var Collection
+     */
+    public $channelCollection;
+
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
         $this->errors = new MessageBag();
+        $this->makeChannelCollection();
 
     }
 
@@ -50,20 +57,66 @@ class ArchiveRequest extends Model
         return $groups;
     }
 
+    protected function makeChannelCollection(){
+        switch ($this->selectMethod){
+            case 'form' : return $this->collectChannelsFromForm();
+            case 'bulk' : return $this->collectChannelsFromBulk();
+            case 'file' : return $this->collectChannelsFromFile();
+        }
+
+    }
+
+    protected function collectChannelsFromForm(){
+        //dd($this->channels);
+        $this->channelCollection = collect($this->channels)
+            ->filter(function ($value, $key) {
+                return ! empty($value['channel']);
+        });
+    }
+
+    protected function collectChannelsFromBulk(){
+        //dd($this->channels);
+        $this->channelCollection = new Collection();
+        $lines = preg_split('/\n|\r\n?/', $this->bulk);
+        $n = 0;
+        foreach ($lines as $line){
+            $n++;
+            //ignore blank lines
+            if (preg_match('/^([\s\t])*$/', $line, $m)){
+                continue;
+            }
+            //Then verify either a channel or channel-whitespace-deadband pattern
+            if (preg_match('/^(\S+)([\s\t]+(\S+))?$/', $line, $m)){
+                $this->channelCollection->push([
+                    'channel' => $m[1],
+                    'deadband'  => isset($m[3]) ? $m[3] : '' ,
+                ]);
+            }else{
+                $this->errors->add('channels',
+                    "Bad format at line $n of bulk channel specification");
+            }
+        }
+
+    }
+
     // TODO use database lookup.
     public function email(){
         return $this->username .'@jlab.org';
     }
 
     public function channels(){
-        return $this->channels;
+        return $this->channelCollection;
     }
 
     public function validate()
     {
-        $this->errors = new MessageBag();
         $this->validateCommonFields();
-        $this->validateGroup();
+        $this->validateChannels();
+
+        if ($this->requestType != 'change-deadbands'){
+            $this->validateMetadata();
+        }
+
         return $this->errors->isEmpty();
     }
 
@@ -73,12 +126,41 @@ class ArchiveRequest extends Model
         $this->validateUsername();
     }
 
+    function validateMetadata(){
+        $this->validateGroup();
+    }
+
     protected function validateUsername()
     {
         //TODO database lookup of username
         if (!$this->username) {
             $this->errors->add('username', 'A valid username is required');
         }
+    }
+
+    protected function validateChannels(){
+        switch ($this->selectMethod){
+            case 'form' : return $this->validateFormChannels();
+            case 'bulk' : return $this->validateBulkChannels();
+            case 'file' : return $this->validateFileChannels();
+        }
+    }
+
+    protected function validateHasChannels(){
+        if ($this->channelCollection->isEmpty()){
+            $this->errors->add('channels', 'At least one channel name must be specified');
+        }
+    }
+    protected function validateFormChannels(){
+        $this->validateHasChannels();
+    }
+
+    protected function validateBulkChannels(){
+        $this->validateHasChannels();
+    }
+
+    protected function validateFileChannels(){
+
     }
 
     protected function validateGroup()
