@@ -50,6 +50,8 @@ facility are in the developmental network.">
                 </b-form-radio-group>
             </b-form-group>
             <b-form-group label-cols-md="3" label="Channels" label-size="lg"
+                          :invalid-feedback="errorFeedback('channels')"
+                          :state="isValid('channels')"
                           :description="selectMethodDescription">
 
 
@@ -233,25 +235,25 @@ history older than this span will continually be purged to free up disk space."
             // help text for channels widget that depends on requestType
             formDescription(){
                 if (this.form.requestType === 'change-metadata'){
-                    return "Enter channels";
+                    return "(required) Enter channels";
                 }else{
-                    return "Enter channels (with optional deadbands)";
+                    return "(required) Enter channels (with optional deadbands)";
                 }
             },
             // help text for bulk channels that depends on requestType
             bulkDescription(){
                 if (this.form.requestType === 'change-metadata'){
-                    return "Enter channels one per line";
+                    return "(required) Enter channels one per line";
                 }else{
-                    return "Enter channels (followed by whitespace and optional deadband) one per line";
+                    return "(required) Enter channels (followed by whitespace and optional deadband) one per line";
                 }
             },
             // help text for file channels that depends on requestType
             fileDescription(){
                 if (this.form.requestType === 'change-metadata'){
-                    return "Choose a plain text file containing channel names";
+                    return "(required) Choose a plain text file containing channel names";
                 }else{
-                    return "Choose a plain text file containing channel names " +
+                    return "(required) Choose a plain text file containing channel names " +
                         "(followed by whitespace and optional deadband) one per line";
                 }
             },
@@ -279,9 +281,25 @@ history older than this span will continually be purged to free up disk space."
 
         },
         methods: {
+            // Submitting a file upload requires us to construct a FormData
+            // object rather than simply using the this.form array.
+            formData(){
+              let formData = new FormData();
+              console.log(Object.keys(this.form));
+                Object.keys(this.form).forEach(key => {
+                    formData.append(key, this.form[key]);
+              });
+              return formData;
+            },
+
             onSubmit(evt) {
                 evt.preventDefault()
-                axios.post(window.baseUrl, this.form)  //expect server to have set baseUrl in main.blade.php
+                this.tidyChannelFields()
+                axios.post(window.baseUrl, this.formData(),{     //server sets baseUrl in main.blade
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
                 .then(
                     response => {
                         this.$bvModal.show('success-dialog');
@@ -297,6 +315,24 @@ history older than this span will continually be purged to free up disk space."
                     }
                 })
                 //alert(JSON.stringify(this.form))
+            },
+
+            // Method to be called when the user presses submit to
+            // tidy up the form and remove data not being submitted.
+            // This can help prevent confusion if the server gives validation
+            // errors.
+            tidyChannelFields(){
+              if (this.form.selectMethod !== 'form'){
+                  this.form.channels = [
+                      {channel: '', deadband: ''}
+                  ];
+              }
+                if (this.form.selectMethod !== 'bulk'){
+                    this.form.bulk = '';
+                }
+                if (this.form.selectMethod !== 'file'){
+                    this.form.file = null;
+                }
             },
             addChannel() {
                 this.form.channels.push({channel: '', deadband: ''});

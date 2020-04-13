@@ -7,6 +7,7 @@ namespace App\Model;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
 
 class ArchiveRequest extends Model
@@ -96,7 +97,14 @@ class ArchiveRequest extends Model
                     "Bad format at line $n of bulk channel specification");
             }
         }
+    }
 
+    protected function collectChannelsFromFile(){
+        $this->channelCollection = new Collection();
+        $this->channelCollection->push([
+            'channel' => 'See attached file',
+            'deadband'  => '' ,
+        ]);
     }
 
     // TODO use database lookup.
@@ -160,7 +168,23 @@ class ArchiveRequest extends Model
     }
 
     protected function validateFileChannels(){
+        $this->validateHasFile();
+    }
 
+    protected function validateHasFile(){
+        $validator = Validator::make(['file' => $this->file], [
+            'file' => 'required|file',
+        ]);
+        if ($validator->fails()) {
+            $this->errors->add('channels','File upload containing channels is missing');
+        }
+        if (filesize($this->file->path()) < 1){     // 1 byte file is still probably useless
+            $this->errors->add('channels','File uploaded appears to be empty');
+        }
+    }
+
+    public function hasFile(){
+        return ! empty($this->file);
     }
 
     protected function validateGroup()

@@ -35,6 +35,9 @@ class ChannelRequest extends Mailable
         $this->to(config('mya.administrator.address'), config('mya.administrator.name'));
         $this->cc($this->archiveRequest->email());
         $this->subject('[TEST] Core Set Request - Add Channels');
+        if ($this->archiveRequest->hasFile()){
+            $this->attach($this->archiveRequest->file->path());
+        }
         return $this->text('emails.channel_request');
     }
 }
