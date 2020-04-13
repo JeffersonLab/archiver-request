@@ -1,6 +1,8 @@
 <?php
 
 use App\Model\ArchiverGroup;
+use App\Model\Staff;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -30,12 +32,14 @@ Route::get('/', 'Controller@show');
 
 Route::post('/', 'Controller@submit');
 
+Route::get('/data/staff', 'Controller@staff');
 
 
-Route::get('/test', function () {
-    foreach (archiverGroupTrees() as $name => $tree){
-        if ($name != 'Applications') dd($tree->toArray());
-    }
+Route::get('/test', function (Request $request) {
+    dd(Staff::whereNotNull('username')
+        ->where('username','LIKE', '%'.$request->get('q').'%')
+        ->get()
+        ->pluck('username'));
 });
 
 

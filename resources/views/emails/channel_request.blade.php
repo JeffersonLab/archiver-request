@@ -9,7 +9,6 @@ Comments
 
 {{$archiveRequest->comments}}
 
---------
 @endif
 
 
@@ -20,4 +19,4 @@ Channel Specifications:
 {{$item['channel']}}   {{isset($item['deadband']) ? $item['deadband'] : ''}}
 @endforeach
 
------------------------
+

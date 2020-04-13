@@ -5,22 +5,36 @@ namespace App\Model;
 
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
 
+
 class ArchiveRequest extends Model
 {
-
+    /**
+     * Any errors accumulated by validate()
+     * @var MessageBag
+     */
     public $errors;
 
+    /**
+     * The list of properties which may not be mass-assigned.
+     *
+     * Empty array implies all properties may be mass-assigned.
+     *
+     * @var array
+     */
     public $guarded = [];
 
     /**
+     * The channels to which the request applies.
+     *
      * @var Collection
      */
     public $channelCollection;
+
+
 
     public function __construct(array $attributes = [])
     {
@@ -30,11 +44,18 @@ class ArchiveRequest extends Model
 
     }
 
+    /**
+     * Factory method to create specific types of Archiver Requests.
+     *
+     * @param array $attributes
+     * @return ArchiveRequest|MetadataRequest
+     * @throws \Exception
+     */
     public static function make(array $attributes = [])
     {
         if (isset($attributes['requestType'])){
             switch ($attributes['requestType']) {
-                case 'add-channels' : return new ArchiveRequest($attributes);
+                case 'change-metadata' : return new MetadataRequest($attributes);
                 default             : return new ArchiveRequest($attributes);
             }
         }
@@ -67,16 +88,28 @@ class ArchiveRequest extends Model
 
     }
 
+    /**
+     * Builds the channels collection when input was array of {channel, deadband} pairs.
+     *
+     * Any items with an empty value for channel will be excluded from the
+     * collection.
+     */
     protected function collectChannelsFromForm(){
-        //dd($this->channels);
         $this->channelCollection = collect($this->channels)
             ->filter(function ($value, $key) {
                 return ! empty($value['channel']);
         });
     }
 
+    /**
+     * Builds the channels collection when input was text blob
+     *   channel   (optional) deadband
+     *   channel   {optional) deadband
+     *
+     * Any blank lines are skipped.
+     * Lines that don't match the pattern above generate errors.
+     */
     protected function collectChannelsFromBulk(){
-        //dd($this->channels);
         $this->channelCollection = new Collection();
         $lines = preg_split('/\n|\r\n?/', $this->bulk);
         $n = 0;
@@ -99,6 +132,10 @@ class ArchiveRequest extends Model
         }
     }
 
+    /**
+     * Makes the channel collection include a single element that simply says
+     * "see attached file"
+     */
     protected function collectChannelsFromFile(){
         $this->channelCollection = new Collection();
         $this->channelCollection->push([
@@ -107,15 +144,45 @@ class ArchiveRequest extends Model
         ]);
     }
 
-    // TODO use database lookup.
-    public function email(){
-        return $this->username .'@jlab.org';
+
+    /**
+     * Return a full staff object based on the user info provided to construct this object.
+     *
+     * @return Staff | null
+     */
+    public function staff()
+    {
+        if ($this->user && isset($this->user['username'])) {
+            return Staff::where('username', $this->user['username'])->first(); // first b/c usernames are unique;
+        }
+        return null;
     }
 
+    /**
+     * Is there staff data?
+     *
+     * @return bool
+     */
+    public function isStaff(){
+        return $this->staff() != null;
+    }
+
+    public function email(){
+        return $this->staff() ? $this->staff()->email : '' ;
+    }
+
+
+    /**
+     * @return Collection
+     */
     public function channels(){
         return $this->channelCollection;
     }
 
+    /**
+     * Validate the constructed object.
+     * @return bool
+     */
     public function validate()
     {
         $this->validateCommonFields();
@@ -124,27 +191,33 @@ class ArchiveRequest extends Model
         if ($this->requestType != 'change-deadbands'){
             $this->validateMetadata();
         }
-
         return $this->errors->isEmpty();
     }
 
     protected function validateCommonFields()
     {
         $this->validateDeployment();
-        $this->validateUsername();
+        $this->validateUser();
     }
 
     function validateMetadata(){
         $this->validateGroup();
     }
 
-    protected function validateUsername()
+    protected function validateUser()
     {
-        //TODO database lookup of username
-        if (!$this->username) {
+        if (!$this->user && $this->user['username']) {
             $this->errors->add('username', 'A valid username is required');
+            return false;
+        }
+        if (!$this->isStaff()) {
+            $this->errors->add('username', 'Username not found');
+        }
+        if ($this->isStaff() && !$this->email()) {
+            $this->errors->add('username', 'No email address for user');
         }
     }
+
 
     protected function validateChannels(){
         switch ($this->selectMethod){
@@ -189,6 +262,7 @@ class ArchiveRequest extends Model
 
     protected function validateGroup()
     {
+
         if (!$this->group) {
             $this->errors->add('group', 'An archiver group must be specified');
         } else {

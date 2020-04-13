@@ -24,6 +24,16 @@ class ChannelRequest extends Mailable
         $this->archiveRequest = $archiveRequest;
     }
 
+    public function makeSubject(){
+        $subject = '[TEST] Core Set Request';
+        switch($this->archiveRequest->requestType){
+            case 'add-channels' : $subject .= ' - Add Channels'; break;
+            case 'change-deadbands' : $subject .= ' - Change Deadbands'; break;
+            case 'change-metadata' : $subject .= ' - Change Metadata'; break;
+        }
+        return $subject;
+    }
+
     /**
      * Build the message.
      *
@@ -34,7 +44,7 @@ class ChannelRequest extends Mailable
         $this->from($this->archiveRequest->email());
         $this->to(config('mya.administrator.address'), config('mya.administrator.name'));
         $this->cc($this->archiveRequest->email());
-        $this->subject('[TEST] Core Set Request - Add Channels');
+        $this->subject($this->makeSubject());
         if ($this->archiveRequest->hasFile()){
             $this->attach($this->archiveRequest->file->path(),[
                 'as' => $this->archiveRequest->file->getClientOriginalName()

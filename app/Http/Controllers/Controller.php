@@ -2,14 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\StaffResource;
+use App\Http\Resources\UserResource;
 use App\Mail\ChannelRequest;
 use App\Model\ArchiveRequest;
 use App\Model\ArchiverGroup;
+use App\Model\Staff;
+use Atlis\Auth\User;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\MessageBag;
 
@@ -19,9 +26,15 @@ class Controller extends BaseController
 
     protected $errors;
 
-    public function __construct()
+    /**
+     * @var Request
+     */
+    protected $request;
+
+    public function __construct(Request $request)
     {
         $this->errors = new MessageBag();
+        $this->request = $request;
     }
 
     /**
@@ -32,6 +45,38 @@ class Controller extends BaseController
     {
         return view('main')
             ->with('groupTrees', $this->groupTreesToOptions());
+    }
+
+    public function staff(Request $request){
+        try{
+            $query = $request->get('q',null);
+            if ($query && strlen($query) > 2) {
+                $query = strtolower($query . '%');
+                $users = $this->getStaffLikeQuery($query);
+                return $this->collectionResponse($users);
+            }else{
+                throw new \Exception('Minimum of 3 characters required for user search.');
+            }
+            } catch (\Throwable $e) {
+                Log::error($e);
+                return response()->json($e->getMessage(), 422, []);
+            }
+    }
+
+    protected function getStaffLikeQuery($query){
+        return Staff::whereNotNull('username')
+            ->where(function ($q) use ($query) {
+                $q->where('username', 'like', $query)
+                    ->orWhere(DB::raw('lower(firstname)'), 'like', $query)
+                    ->orWhere(DB::raw('lower(lastname)'), 'like', $query);
+            })->orderBy('lastname')->orderBy('firstname')->get();
+    }
+
+    protected function collectionResponse(Collection $users){
+        $resource = StaffResource::collection($users);
+        $response = $resource->toResponse($this->request);
+        $response->setEncodingOptions($response->getEncodingOptions() | JSON_PRETTY_PRINT);
+        return $response;
     }
 
     /**
@@ -79,7 +124,12 @@ class Controller extends BaseController
     public function submit(Request $request)
     {
         try {
-            $archiveRequest = ArchiveRequest::make($request->all());
+            $archiveRequest = ArchiveRequest::make(json_decode($request->get('form'),true));
+            if ($request->hasFile('file')){
+                $archiveRequest->file = $request->file('file');
+            }
+
+
             if ($archiveRequest->validate()) {
                 Mail::send(new ChannelRequest($archiveRequest));
                 return response()->json('success');

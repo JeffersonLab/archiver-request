@@ -21,7 +21,9 @@ facility are in the developmental network.">
                           :state="isValid('username')"
                 description="(required) Person to contact with questions about the request">
                 <b-input-group append="@jlab.org" class="username">
-                    <b-form-input class="username" placeholder="JLab username" v-model="form.username"></b-form-input>
+<!--                    <b-form-input class="username" placeholder="JLab username" v-model="form.username"></b-form-input>-->
+                    <staff-select v-model="form.user"></staff-select>
+
                 </b-input-group>
             </b-form-group>
 
@@ -75,7 +77,7 @@ facility are in the developmental network.">
                 ></b-textarea>
 
                 <b-form-file v-if="form.selectMethod=='file'"
-                             v-model="form.file"
+                             v-model="file"
                              placeholder="Choose a file or drop it here..."
                              drop-placeholder="Drop file here..."
                 ></b-form-file>
@@ -183,6 +185,7 @@ history older than this span will continually be purged to free up disk space."
     import Treeselect from '@riophae/vue-treeselect';
     import '@riophae/vue-treeselect/dist/vue-treeselect.css'
     import ChannelWidget from "./ChannelWidget";
+    import StaffSelect from "./StaffSelect";
 
 
     export default {
@@ -191,16 +194,18 @@ history older than this span will continually be purged to free up disk space."
             vSelect,
             ChannelWidget,
             Treeselect,
+            StaffSelect
         },
         data() {
             return {
-                info: '',
+                info: '',file: null,
+
                 form: {
                     deployment: 'OPS',
                     username: '',
+                    user: null,
                     requestType: 'add-channels',
                     selectMethod: 'form',
-                    file: null,
                     bulk: '',
                     channels: [
                         {channel: '', deadband: ''}
@@ -284,17 +289,24 @@ history older than this span will continually be purged to free up disk space."
             // Submitting a file upload requires us to construct a FormData
             // object rather than simply using the this.form array.
             formData(){
-              let formData = new FormData();
-              console.log(Object.keys(this.form));
-                Object.keys(this.form).forEach(key => {
-                    formData.append(key, this.form[key]);
+              const json = JSON.stringify(this.form);
+              const blob = new Blob([json], {
+                    type: 'application/json'
               });
+
+              const formData = new FormData();
+              formData.append("form", json);
+              if (this.file){
+                  formData.append("file", this.file);
+              }
+
               return formData;
             },
 
             onSubmit(evt) {
                 evt.preventDefault()
                 this.tidyChannelFields()
+                console.log(this.formData())
                 axios.post(window.baseUrl, this.formData(),{     //server sets baseUrl in main.blade
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -331,7 +343,7 @@ history older than this span will continually be purged to free up disk space."
                     this.form.bulk = '';
                 }
                 if (this.form.selectMethod !== 'file'){
-                    this.form.file = null;
+                    this.file = null;
                 }
             },
             addChannel() {

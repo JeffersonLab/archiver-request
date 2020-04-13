@@ -77,7 +77,18 @@ return [
             'schema' => 'public',
             'sslmode' => 'prefer',
         ],
-
+        # https://yajrabox.com/docs/laravel-oci8/master/general-settings
+        'oracle' => array(
+            'driver' => 'oracle',
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '1521'),
+            'database' => env('DB_DATABASE', 'xe'),
+            'service_name' => env('DB_SERVICE_NAME', ''),
+            'username' => env('DB_USERNAME', ''),
+            'password' => env('DB_PASSWORD', ''),
+            'charset' => 'AL32UTF8',
+            'prefix' => '',
+        ),
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DATABASE_URL'),
