@@ -40,7 +40,7 @@
             /**
              * The name of a URL route to query
              */
-            url: {type: String, default: '/data/staff'},
+            url: {type: String, default: window.baseUrl+'/data/staff'},
             /**
              * Whether to allow multiple selections or not.
              */
