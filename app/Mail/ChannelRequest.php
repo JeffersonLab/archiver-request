@@ -36,7 +36,9 @@ class ChannelRequest extends Mailable
         $this->cc($this->archiveRequest->email());
         $this->subject('[TEST] Core Set Request - Add Channels');
         if ($this->archiveRequest->hasFile()){
-            $this->attach($this->archiveRequest->file->path());
+            $this->attach($this->archiveRequest->file->path(),[
+                'as' => $this->archiveRequest->file->originalName
+            ]);
         }
         return $this->text('emails.channel_request');
     }
