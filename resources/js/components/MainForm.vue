@@ -384,7 +384,7 @@ history older than this span will continually be purged to free up disk space."
     }
 
     .username {
-        max-width: 20em;
+        max-width: 28em;
     }
 
     .new-group-toggle {

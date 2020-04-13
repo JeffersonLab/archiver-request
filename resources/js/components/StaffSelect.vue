@@ -109,6 +109,6 @@
 
 <style scoped>
 .filters-select {
-    min-width: 12em;
+    min-width: 18em;
 }
 </style>

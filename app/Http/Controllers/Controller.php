@@ -128,15 +128,12 @@ class Controller extends BaseController
             if ($request->hasFile('file')){
                 $archiveRequest->file = $request->file('file');
             }
-
-
             if ($archiveRequest->validate()) {
                 Mail::send(new ChannelRequest($archiveRequest));
                 return response()->json('success');
             }
             return response()->json($archiveRequest->errors, 400);
         } catch (\Exception $e) {
-            dd($e);
             return response()->json($e->getMessage(), 500);
         }
 
