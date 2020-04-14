@@ -31,8 +31,11 @@
                                     Core Archive Set Request Form
                                 </h2>
                                 <p>
-                                    Use the forms below to request adding channels to the Mya archiver or to change deadbands or metadata of
-                                    currently archived channels.  For other types of requests, please <a href="#">contact the Mya Administrator</a>.
+                                    Use the forms below to request adding channels to the Mya archiver
+                                    or to change deadbands or metadata of currently archived channels.
+                                    For other types of requests, please
+                                    <a href="mailto:{{config('mya.administrator.address')}}?subject=Mya%20Request">
+                                        email the Mya Administrator</a>.
                                 </p>
                                 <p>
                                     <learn-more></learn-more>
