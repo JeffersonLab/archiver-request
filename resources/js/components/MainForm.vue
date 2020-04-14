@@ -114,7 +114,8 @@ when proposing the creation of a new archive group.">
                 <div class="align-top" style="display: inline-block" v-show="form.group">Path: {{form.group}}</div>
 
 
-                <b-form-input v-model="form.group" v-if="wantsNewGroup" placeholder="Group Name"></b-form-input>
+                <b-form-input v-model="form.group" v-if="wantsNewGroup"
+                              placeholder="example: group:subgroup:newgroup"></b-form-input>
                 <b-form-checkbox class="new-group-toggle text-muted" v-model="form.newGroup" value="1">
                     Request a New Group
                 </b-form-checkbox>
