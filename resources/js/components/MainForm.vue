@@ -86,7 +86,7 @@ facility are in the developmental network.">
             </b-form-group>
 
             <b-form-group label-cols-md="3" label="Comments" label-size="lg"
-                          description="Any comments you care to make about the request">
+                          description="(optional) Any comments you care to make about the request">
                 <b-textarea v-model="form.comments"
                             :trim="true"
                             max-rows="8"

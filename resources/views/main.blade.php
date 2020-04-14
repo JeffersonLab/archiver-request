@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="{{asset('css/app.css')}}">
 
 <style>
+    #app{
+        margin-bottom: 2em;
+    }
     .top-text {
         padding-left: 1em;
     }
