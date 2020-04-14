@@ -70,7 +70,7 @@ class ArchiveRequest extends Model
      */
     public static function groups()
     {
-	foreach(self::readGroups() as $line){	        
+	foreach(self::readGroups() as $line){
 	//foreach (file(storage_path('app/groups.txt')) as $line) {
             if ('UserSet' == substr($line, 0, 7)) {
                 continue;
@@ -81,7 +81,11 @@ class ArchiveRequest extends Model
     }
 
     protected static function readGroups(){
-	return explode("\n", shell_exec(env('ARCHIVE_CMD')));
+        exec(env('ARCHIVE_GROUPS_CMD'), $output, $retval);
+        if ($retval !== 0){
+            throw new \Exception('Unable to obtain archiver groups hierarchy');
+        }
+        return $output;
     }
 
     protected function makeChannelCollection(){

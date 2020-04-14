@@ -43,8 +43,13 @@ class Controller extends BaseController
      */
     public function show()
     {
-        return view('main')
-            ->with('groupTrees', $this->groupTreesToOptions());
+        try{
+            return view('main')
+                ->with('groupTrees', $this->groupTreesToOptions());
+        }catch (\Exception $e){
+            Log::error($e);
+            abort(500, $e->getMessage());
+        }
     }
 
     public function staff(Request $request){

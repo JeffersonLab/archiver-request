@@ -36,10 +36,13 @@ Route::get('/data/staff', 'Controller@staff');
 
 
 Route::get('/test', function (Request $request) {
-    dd(Staff::whereNotNull('username')
-        ->where('username','LIKE', '%'.$request->get('q').'%')
-        ->get()
-        ->pluck('username'));
+    $query = $request->get('q',null);
+    if ($query && strlen($query) > 2) {
+        dd(Staff::whereNotNull('username')
+            ->where('username', 'LIKE', '%' . $request->get('q') . '%')
+            ->get()
+            ->pluck('username'));
+    }
 });
 
 
