@@ -3,6 +3,8 @@ Request: {{$archiveRequest->requestedTypeLabel()}}
 Requester: {{$archiveRequest->email()}}
 Deployment: {{$archiveRequest->deployment}}
 Group: {{$archiveRequest->group}}
+Duration: {{$archiveRequest->duration}}
+Keep: {{$archiveRequest->keep}}
 
 @if ($archiveRequest->comments)
 Comments
