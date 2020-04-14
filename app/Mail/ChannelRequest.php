@@ -25,13 +25,7 @@ class ChannelRequest extends Mailable
     }
 
     public function makeSubject(){
-        $subject = '[TEST] Core Set Request';
-        switch($this->archiveRequest->requestType){
-            case 'add-channels' : $subject .= ' - Add Channels'; break;
-            case 'change-deadbands' : $subject .= ' - Change Deadbands'; break;
-            case 'change-metadata' : $subject .= ' - Change Metadata'; break;
-        }
-        return $subject;
+        return '[TEST] Core Set Request - '.$this->archiveRequest->requestedTypeLabel();
     }
 
     /**

@@ -315,6 +315,7 @@ history older than this span will continually be purged to free up disk space."
                 .then(
                     response => {
                         this.$bvModal.show('success-dialog');
+                        this.errors = {};
                     }
                 )
                 .catch(error => {

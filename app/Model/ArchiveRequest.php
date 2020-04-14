@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
+use Illuminate\Support\Str;
 
 
 class ArchiveRequest extends Model
@@ -94,7 +95,15 @@ class ArchiveRequest extends Model
             case 'bulk' : return $this->collectChannelsFromBulk();
             case 'file' : return $this->collectChannelsFromFile();
         }
+    }
 
+    /**
+     * Return a nice text label describing the type of request.
+     * i.e. Add Channels, Change Deadbands, etc.
+     * @return string
+     */
+    public function requestedTypeLabel(){
+        return Str::title(str_replace('-',' ', $this->requestType));
     }
 
     /**
