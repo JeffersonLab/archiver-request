@@ -70,13 +70,18 @@ class ArchiveRequest extends Model
      */
     public static function groups()
     {
-        foreach (file(storage_path('app/groups.txt')) as $line) {
+	foreach(self::readGroups() as $line){	        
+	//foreach (file(storage_path('app/groups.txt')) as $line) {
             if ('UserSet' == substr($line, 0, 7)) {
                 continue;
             }
             $groups[] = trim($line);
         }
         return $groups;
+    }
+
+    protected static function readGroups(){
+	return explode("\n", shell_exec(env('ARCHIVE_CMD')));
     }
 
     protected function makeChannelCollection(){
