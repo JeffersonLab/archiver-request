@@ -99,7 +99,7 @@ class ArchiveRequest extends Model
                 continue;
             }
             //Then verify either a channel or channel-whitespace-deadband pattern
-            if (preg_match('/^(\S+)([\s\t]+(\S+))?$/', $line, $m)) {
+            if (preg_match('/^(\S+)([\s\t]+(\S+))?$/', trim($line), $m)) {
                 $channels->push([
                     'channel' => $m[1],
                     'deadband' => isset($m[3]) ? $m[3] : '',
