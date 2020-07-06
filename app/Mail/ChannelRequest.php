@@ -25,7 +25,7 @@ class ChannelRequest extends Mailable
     }
 
     public function makeSubject(){
-        return '[TEST] Core Set Request - '.$this->archiveRequest->requestedTypeLabel();
+        return 'Core Set Request - '.$this->archiveRequest->requestedTypeLabel();
     }
 
     /**
