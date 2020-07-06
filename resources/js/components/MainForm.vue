@@ -197,11 +197,14 @@ history older than this span will continually be purged to free up disk space."
             Treeselect,
             StaffSelect
         },
+        created(){
+          this.initializeForm()
+        },
         data() {
             return {
                 info: '',file: null,
-
-                form: {
+                form: {},
+                defaultForm: {
                     deployment: 'OPS',
                     username: '',
                     user: null,
@@ -287,6 +290,10 @@ history older than this span will continually be purged to free up disk space."
 
         },
         methods: {
+            initializeForm(){
+              this.form = Object.assign({}, this.defaultForm)
+              this.form.channels = [{channel: '', deadband: ''}]
+            },
             // Submitting a file upload requires us to construct a FormData
             // object rather than simply using the this.form array.
             formData(){
@@ -315,16 +322,17 @@ history older than this span will continually be purged to free up disk space."
                 })
                 .then(
                     response => {
-                        this.$bvModal.show('success-dialog');
-                        this.errors = {};
+                        this.$bvModal.show('success-dialog')
+                        this.errors = {}
+                        this.initializeForm()
                     }
                 )
                 .catch(error => {
                     if (error.response && error.response.status == 400){
-                        this.errors = error.response.data;
-                        this.$bvModal.show('form-errors-dialog');
+                        this.errors = error.response.data
+                        this.$bvModal.show('form-errors-dialog')
                     }else{
-                        console.log(error);
+                        console.log(error)
                         alert('An error occurred when trying to submit the form.')
                     }
                 })
