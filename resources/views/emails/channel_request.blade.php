@@ -14,7 +14,7 @@ Keep: {{$archiveRequest->keep}}
 Comments
 --------
 
-{{$archiveRequest->comments}}
+{!! $archiveRequest->comments !!}
 
 @endif
 
