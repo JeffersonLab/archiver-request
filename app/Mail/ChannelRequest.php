@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Mail;
+namespace app\Mail;
 
-use App\Model\ArchiveRequest;
+use App\Models\ArchiveRequest;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class ChannelRequest extends Mailable
 {

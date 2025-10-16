@@ -1,38 +1,17 @@
 <?php
 
-use App\Model\ArchiverGroup;
-use App\Model\Staff;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 
-/**
- * TODO:
- *   Remove groups from blade view -- no longer used.
- *   Autocomplete for username field
- *   Generate Email
- *   Client Side form validation
- *   Server side form validation
- *   Client side validation errors display
- *
- */
+//Route::get('/', function () {
+//    return view('welcome');
+//});
 
+Route::get('/', [Controller::class, 'show']);
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+Route::post('/', [Controller::class, 'submit']);
 
-Route::get('/', 'Controller@show');
-
-Route::post('/', 'Controller@submit');
-
-Route::get('/data/staff', 'Controller@staff');
+Route::get('/data/staff', [Controller::class,'staff']);
 
 
 Route::get('/test', function (Request $request) {
@@ -44,12 +23,3 @@ Route::get('/test', function (Request $request) {
             ->pluck('username'));
     }
 });
-
-
-
-
-
-
-
-
-

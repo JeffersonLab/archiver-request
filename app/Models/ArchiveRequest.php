@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Model;
+namespace App\Models;
 
 
 use Illuminate\Database\Eloquent\Model;
@@ -68,6 +68,7 @@ class ArchiveRequest extends Model
             ->filter(function ($value, $key) {
                 return !empty($value['channel']);
             });
+        return $this->channelCollection;
     }
 
     /**
@@ -81,6 +82,7 @@ class ArchiveRequest extends Model
     protected function collectChannelsFromBulk()
     {
         $this->channelCollection = $this->parseChannels($this->bulk);
+        return $this->channelCollection;
     }
 
     /**
@@ -123,6 +125,7 @@ class ArchiveRequest extends Model
             'channel' => 'See attached file',
             'deadband' => '',
         ]);
+        return $this->channelCollection;
     }
 
     /**

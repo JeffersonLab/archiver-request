@@ -1,0 +1,40 @@
+# For more information: https://laravel.com/docs/sail
+services:
+  web:
+    image: 'jeffersonlab/accweb:0.2'
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      WWWUSER: '${WWWUSER}'
+    volumes:
+      - '.:/var/www/html'
+    depends_on:
+      - oracle
+      - mailpit
+  oracle:
+    image: 'gvenzl/oracle-xe:18'
+    hostname: oracle
+    ports:
+      - '${FORWARD_ORA_PORT:-1521}:1521'
+    environment:
+      ORACLE_PASSWORD: '${ORACLE_PASSWORD}'
+      APP_USER: '${APP_USER}'
+      APP_USER_PASSWORD: '${APP_USER_PASSWORD}'
+      DB_PASSWORD: '${DB_PASSWORD}'
+    #volumes:
+      # Keeps persistent oracle data in project run directory
+      # - './run/var/oracle/oradata:/opt/oracle/oradata'
+      #  *.sql, *.sql.gz, *.sql.zip or *.sh scripts to perform additional initialization of the database
+      #  that are only run the first time the database is initialized.
+      # - './run/var/oracle/initdb:/container-entrypoint-initdb.d'
+      # *.sql, *.sql.gz, *.sql.zip or *.sh scripts to perform additional action after the database
+      # running has been started
+      #- './run/var/oracle/startdb:/container-entrypoint-startdb.d'
+  mailpit:
+    image: 'axllent/mailpit'
+    ports:
+      - '${FORWARD_MAILHOG_PORT:-1025}:1025'
+      - '${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025'
+
+
