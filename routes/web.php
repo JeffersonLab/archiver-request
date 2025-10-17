@@ -11,7 +11,7 @@ Route::get('/', [Controller::class, 'show']);
 
 Route::post('/', [Controller::class, 'submit']);
 
-Route::get('/data/staff', [Controller::class,'staff']);
+Route::get('/data/staff', [Controller::class,'staff'])->name('staff');
 
 
 Route::get('/test', function (Request $request) {
