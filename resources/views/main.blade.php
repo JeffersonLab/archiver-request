@@ -64,6 +64,7 @@
 
 <script>
 var baseUrl = @json(url()->current().'/');  //trailing slash to prevent 301 redirects on postings
+var staffUrl = @json(route('staff'));
 var groupTrees = @json($groupTrees, JSON_PRETTY_PRINT);
 </script>
 
