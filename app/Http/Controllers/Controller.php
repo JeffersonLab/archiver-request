@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\StaffResource;
-use app\Mail\ChannelRequest;
+use App\Mail\ChannelRequest;
 use App\Models\ArchiveRequest;
 use App\Models\ArchiverGroup;
 use App\Models\Staff;
@@ -54,7 +54,7 @@ class Controller extends BaseController
         try{
             $query = $request->get('q',null);
             if ($query && strlen($query) > 2) {
-                $query = strtolower($query . '%');
+                $query = strtolower('%' . $query . '%');
                 $users = $this->getStaffLikeQuery($query);
                 return $this->collectionResponse($users);
             }else{

@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Mail;
+namespace App\Mail;
 
 use App\Models\ArchiveRequest;
 use Illuminate\Bus\Queueable;
