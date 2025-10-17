@@ -3,10 +3,52 @@
 
 An updated user-friendly form to assist users making archiver requests.
 
+## Development
 
-## Installation
+### Docker compose
+The provided docker-compose.yml file makes it feasible to develop this application on any system with docker.
 
-Clone this project onto a web server.  
+```shell
+git clone https://github.com/JeffersonLab/archiver-request.git
+cd archiver-request
+docker compose up --detach
+
+# Run compose to install PHP packages
+docker exec -it archiver-request-web-1 composer update
+
+# Run npm to install Javascript packages
+docker exec -it archiver-request-web-1 npm install
+
+# Run the database migration to create a minimal staff table for development purposes
+docker exec -it archiver-request-web-1 php artisan migrate
+
+# Run the database seeder to create some sample user entries.
+docker exec -it archiver-request-web-1  php artisan db:seed
+
+# Compile the front-end assets with laravel mix
+docker exec -it archiver-request-web-1  npx mix
+
+# to view terminal log files
+docker compose logs
+```
+
+The application can now be accessed at http://localhost
+
+
+### Mya groups list
+A text file containing data equivalent to that output by running the archive command is provided for development and testing
+purposes so that it is possible to develop offline without access to mya and its utilities.
+
+Edit the `.env` file and change `ARCHIVE_GROUPS_CMD` as shown:
+
+```text
+#ARCHIVE_GROUPS_CMD="/cs/certified/apps/archive/7.4/bin/rhel-7-x86_64/archive -S "
+ARCHIVE_GROUPS_CMD="cat /var/www/html/storage/app/private/archiver-groups.txt"
+```
+
+## Installation on myrestoreweb
+
+Clone this project onto a web server.
 ```shell script
 cd /var/www
 git clone https://github.com/JeffersonLab/archiver-request.git
@@ -17,29 +59,15 @@ Prepare the application
 cd /var/www/archiver-request
 chmod 777 bootstrap/cache
 find storage -type d -exec chmod 777 {} \;
-cp .env.example .env
+cp .env.example .env  
 ./artisan key:generate
-```
+vi .env   # Edit appropriately to set environment variables
 
-Install composer and npm dependencies.
-```shell script
+# Install composer and npm dependencies.
 composer install
 npm install
-npm run production
+npx mix
 ```
-
-## Development
-
-### Staff view/table
-The following database migration and seeder may be used to populate a staff table for development and testing purposes.
-In the jlab production environment the data would instead come from the public staff view.
-
-
-### Mya groups
-A text file containing data equivalent to that output by running the archive command is provided for development and testing
-purposes so that it is possible to develop offline without access to mya and its certsw baggage.
-
-
 
 
 
