@@ -30,11 +30,18 @@ docker exec -it archiver-request-web-1  php artisan db:seed
 # Compile the front-end assets with laravel mix
 docker exec -it archiver-request-web-1  npx mix
 
+# Get a bash shell in the container
+docker exec -it archiver-request-web-1  /bin/bash
+
+
 # to view terminal log files
 docker compose logs
 ```
 
 The application can now be accessed at http://localhost
+
+Email generated in testing will go to mailpit with `.env.example` default settings and may be viewed at http://localhost:8025/
+
 
 
 ### Mya groups list
