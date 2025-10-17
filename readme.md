@@ -57,15 +57,15 @@ ARCHIVE_GROUPS_CMD="cat /var/www/html/storage/app/private/archiver-groups.txt"
 
 ## Installation on myrestoreweb
 
-Clone this project onto a web server.
+Clone this project onto accweb.
 ```shell script
-cd /var/www
-git clone https://github.com/JeffersonLab/archiver-request.git
+cd /var/www/myrestore
+git clone https://github.com/JeffersonLab/archiver-request.git 2.0  # into a directory named 2.0
 ```
 
 Prepare the application
 ```shell script
-cd /var/www/archiver-request
+cd 2.0
 chmod 777 bootstrap/cache
 find storage -type d -exec chmod 777 {} \;
 cp .env.example .env  
