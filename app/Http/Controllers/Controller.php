@@ -3,17 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\StaffResource;
-use App\Http\Resources\UserResource;
 use App\Mail\ChannelRequest;
-use App\Model\ArchiveRequest;
-use App\Model\ArchiverGroup;
-use App\Model\Staff;
-use Atlis\Auth\User;
+use App\Models\ArchiveRequest;
+use App\Models\ArchiverGroup;
+use App\Models\Staff;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -56,7 +54,7 @@ class Controller extends BaseController
         try{
             $query = $request->get('q',null);
             if ($query && strlen($query) > 2) {
-                $query = strtolower($query . '%');
+                $query = strtolower('%' . $query . '%');
                 $users = $this->getStaffLikeQuery($query);
                 return $this->collectionResponse($users);
             }else{
