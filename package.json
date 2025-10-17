@@ -13,7 +13,7 @@
         "vite": "^7.0.7",
         "vue": "^2.7",
         "vue-jstree": "^2.1.6",
-        "vue-loader": "^15.11.1",
+        "vue-loader": "^17.4.2",
         "vue-select": "^3.20.4",
         "vue-template-compiler": "^2.7.16",
         "@riophae/vue-treeselect": "^0.4.0"
