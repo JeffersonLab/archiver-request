@@ -3,6 +3,8 @@
 
 An updated user-friendly form to assist users making archiver requests.
 
+![Screenshot](screenshot.jpg?raw=true "Screenshot")
+
 ## Development
 
 ### Docker compose
